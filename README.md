@@ -65,7 +65,7 @@ cmake -G Ninja ../enzyme -DLLVM_DIR=/path/to/llvm/lib/cmake/llvm
 
 The static libraries then reside in `/build/Enzyme`. The 3 libraries one should see are:
 
-1. ClangEnzyme-15.so
-2. LLDEnzyme-15.so
-3. LLVMEnzyme-15.so
+1. `ClangEnzyme-15.so`
+2. `LLDEnzyme-15.so`
+3. `LLVMEnzyme-15.so`
 
