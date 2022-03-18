@@ -28,7 +28,7 @@ git checkout fir-dev
 
 For this we are essentially performing an [out-of-tree build of F18](https://github.com/flang-compiler/f18-llvm-project/blob/fir-dev/flang/README.md) against the custom LLVM version with the OpenMP optimizations. Begin by building the custom branch of LLVM 
 
-#### Custom LLVM-MLIR Version
+### Custom LLVM-MLIR Version
 
 ```bash
 cd llvm-openmp-jdoerfert
@@ -47,13 +47,33 @@ cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=X86 -D
 ninja
 ```
 
-#### F18 built against Custom LLVM Branch
+### F18 built against Custom LLVM Branch
+
+#### In-Tree Build
+
+```bash
+mkdir build && cd build
+cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_ENABLE_PROJECTS="clang;flang;mlir;openmp" -DCMAKE_CXX_STANDARD=17 -DLLVM_BUILD_TOOLS=On -DLLVM_INSTALL_UTILS=On -DLLVM_ENABLE_PLUGINS=On
+```
 
 
+#### Out-of-Tree Build
 
+Addition of the custom LLVM installation to the Path environment
 
+```bash
+export PATH=/home/lpaehler/AutomaticDifferentiation/FlangTesting/llvm-openmp-jdoerfert/build/bin:$PATH
+```
 
-#### Build Enzyme against Custom LLVM Branch
+Create build space and prepare for installation of Flang/F18
+
+```bash
+mkdir build-flang && cd build-flang
+cmake -G Ninja ../flang -DLLVM_DIR=~/Work/AutomaticDifferentiation/FlangTesting/llvm-openmp-jdoerfert/build/lib/cmake/llvm -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_TARGETS_TO_BUILD=X86 -DCLANG_DIR=~/Work/AutomaticDifferentiation/FlangTesting/llvm-openmp-jdoerfert/build/lib/cmake/clang
+ninja
+```
+
+### Build Enzyme against Custom LLVM Branch
 
 For Enzyme we can follow the usual Enzyme [installation workflow](https://enzyme.mit.edu/Installation/):
 
@@ -68,4 +88,6 @@ The static libraries then reside in `/build/Enzyme`. The 3 libraries one should 
 1. `ClangEnzyme-15.so`
 2. `LLDEnzyme-15.so`
 3. `LLVMEnzyme-15.so`
+
+> Do we need to build with `-DENZYME_FLANG=ON`?
 
