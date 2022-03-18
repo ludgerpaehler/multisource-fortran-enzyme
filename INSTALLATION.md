@@ -73,6 +73,38 @@ cmake -G Ninja ../flang -DLLVM_DIR=~/Work/AutomaticDifferentiation/FlangTesting/
 ninja
 ```
 
+Currently fails with
+
+```bash
+/home/lpaehler/Work/AutomaticDifferentiation/FlangTesting/f18-llvm-project/flang/include/flang/Optimizer/Transforms/Passes.td:19:30: error: Couldn't find class 'FunctionPass'
+def AffineDialectPromotion : FunctionPass<"promote-to-affine">
+```
+
+After previously encountering this warning in the configuration step of ninja
+
+```bash
+CMake Warning (dev) at <...>/lib/cmake/llvm/TableGen.cmake:99 (add custom command):
+    Policy CMP0116 is not set: Ninja generators transform DEPFILEs from
+    add_custom_command(). Run "cmake --help-policy CMP0116" for policy
+    details. Use the cmake_policy command to set the policy and suppress this
+    warning.
+Call Stack (most recent call first):
+    /home/lpaehler/Work/AutomaticDifferentiation/FlangTesting/llvm-openmp-jdoerfert/build/lib/cmake/mlir/AddMLIR.cmake:5 (tablegen)
+    include/flang/Optimizer/CodeGen/CMakeLists.txt:3 (mlir_tablegen)
+```
+
+The error returned when using the same command without Ninja, but with make is
+
+```bash
+/home/lpaehler/Work/AutomaticDifferentiation/FlangTesting/f18-llvm-project/flang/include/flang/Optimizer/Dialect/FIROps.td:22:36: error: Couldn't find class 'OpTrait'
+class fir_Op<string mnemonic, list<OpTrait> traits>
+
+/home/lpaehler/Work/AutomaticDifferentiation/FlangTesting/f18-llvm-project/flang/include/flang/Optimizer/Dialect/FIROps.td:22:43: error: unknown class name
+class fir_Op<string mnemonic, list<OpTrait> traits>
+```
+
+> Investigate what is happening there inside of this class!!!
+
 ### Build Enzyme against Custom LLVM Branch
 
 For Enzyme we can follow the usual Enzyme [installation workflow](https://enzyme.mit.edu/Installation/):
@@ -88,6 +120,5 @@ The static libraries then reside in `/build/Enzyme`. The 3 libraries one should 
 1. `ClangEnzyme-15.so`
 2. `LLDEnzyme-15.so`
 3. `LLVMEnzyme-15.so`
-
 > Do we need to build with `-DENZYME_FLANG=ON`?
 
